@@ -1,0 +1,13 @@
+{
+    "name": "M2C2",
+    "namespace": "PSU\\M2C2", 
+    "description": "This is a description of the module, and will be displayed below the module name in the user interface.",
+    "framework-version": 12,
+    "authors": [
+        {
+            "name": "Cory Jackson",
+            "email": "cjj5167@psu.edu",
+            "institution": "PSU"
+        }
+    ]
+}
