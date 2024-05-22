@@ -121,29 +121,12 @@ class M2C2 extends \ExternalModules\AbstractExternalModule
 
         if ( $isValidM2C2 ) {
             // Call the new function
-            $this->processM2C2Field( $field[ 'field_name' ], $m2c2Settings );
+            $this->addM2C2($m2c2Settings );
         }
     }
 
-
-    // New function to process the M2C2 field
-
-    function processM2C2Field( $field_name, $m2c2Settings ) {
-        $m2c2SettingsJSON = json_encode( $m2c2Settings );
-
-        // Link format
-        // https://prod.m2c2kit.com/m2c2kit/nt/index.html
-        //      ?activity_name = [ symbol-search, grid-memory, color-shapes, color-dots ]
-        //      &api_key = demo
-        //      &study_id = demo
-        //      &number_of_trials = [ NUM_TRIALS ]::int
-        //      &width = 400
-        //      &height = 1000
-        //      &show_quit_button = false::boolean
-        //      &participant_id = None
-        //      &session_id = None
-        //      &admin_type = qualtrics
-
+    function addM2C2( $m2c2Settings ) {
+        
         $url = 'https://prod.m2c2kit.com/m2c2kit/nt/index.html?';
         $url .= 'activity_name=' . $m2c2Settings[ 'activity_name' ] ;
         $url .= '&api_key=' . $m2c2Settings[ 'api_key' ] ;
@@ -155,44 +138,16 @@ class M2C2 extends \ExternalModules\AbstractExternalModule
         $url .= '&participant_id=None';
         $url .= '&session_id=None';
         $url .= '&admin_type=' . $m2c2Settings[ 'admin_type' ] ;
+        echo '<script> var m2c2Url = ' . json_encode( $url ) . ';</script>';
+        echo '<script> var m2c2Settings = ' . json_encode( $m2c2Settings ) . ';</script>';
 
-        echo "<script>console.log('using link: ' + {$url});</script>";
+        // echo '<div id="overlay-iframe-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: rgba(0, 0, 0, 0.5);">
+        //     <iframe id="overlay-iframe" src="' . $url . '" style="height: 100%; width: 100%; border: none;"></iframe></div>';
 
-        echo '<div id="overlay-iframe-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: rgba(0, 0, 0, 0.5);">
-            <iframe id="overlay-iframe" src="' . $url . '" style="height: 100%; width: 100%; border: none;"></iframe>
-        </div>';
-
-        echo '<script>
-        var m2c2Settings = ' . $m2c2SettingsJSON . ';
-        var embeddedDataPrefix = "TRIAL_DATA_";
-        window.addEventListener("message", function(event) {
-            console.log("event fired: " + event.data.name);
-            if (event.data.name === "m2c2kit-trial-done" || event.data.name === "newData") {
-                console.log("found new event: " + event.data.name);
-                console.log("data: " + event.data.data);
-                var data = JSON.parse(event.data.data);
-
-                // data will consist of multiple trials, but we want the last trial
-                var newData = data.trials[data.trials.length - 1];
-                var trial_num = newData.trial_index;
-
-                // Store data into embedded variable dynamically based on trial_num
-                var fieldName = m2c2Settings.fields[trial_num]; // Adjusted to start from 0 index
-                $("#" + fieldName).val(JSON.stringify(newData));
-            } else if (event.data.name === "m2c2kit-done") {
-                console.log("m2c2kit-done event received");
-                
-                // Hide the iframe container
-                $("#overlay-iframe-container").hide();
-            }
-        });
-        </script>';
+        $this->includeJs( 'js/m2c2.js' );
     }
 
     protected function includeJs( $file ) {
-        // Use this function to use your JavaScript files in the frontend
-        echo "Loading $file<br>";
-        echo "<script>alert('Loading $file');</script>";
         echo '<script src="' . $this->getUrl( $file ) . '"></script>';
     }
 }
