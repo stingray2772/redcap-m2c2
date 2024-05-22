@@ -15,10 +15,6 @@ class M2C2 extends \ExternalModules\AbstractExternalModule
     protected static $M2C2_SETTINGS_ACTIVITY_NAMES = array( 'symbol-search', 'grid-memory', 'color-shapes', 'color-dots' );
     protected static $M2C2_SETTINGS_ADMIN_TYPES = array( 'qualtrics' );
 
-    function check_m2c2_setup($field) {
-        
-    }
-
     function redcap_survey_page( $project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance ) {
         global $Proj;
 
@@ -28,109 +24,107 @@ class M2C2 extends \ExternalModules\AbstractExternalModule
 
         foreach ( $instrument_dict as $field ) {
             if ( $field[ 'field_type' ] == 'notes' && strpos( $field[ 'field_annotation' ], '@M2C2' ) !== false ) {
-                $isValidM2C2 = false;
+                $this->check_m2c2_setup( $instrument_dict, $field );
+            }
+        }
+    }
 
-                // Regular expression to match @M2C2 and capture the JSON part
-                //$pattern = '/@M2C2=({.*?})/';
-                $pattern = '/@M2C2=(\{[^}]+\})/';
+    function check_m2c2_setup($instrument_dict, $field) {
+        $isValidM2C2 = false;
 
-                // Array to store the extracted JSON
-                $m2c2Settings = [];
+        // Regular expression to match @M2C2 and capture the JSON part
+        //$pattern = '/@M2C2=({.*?})/';
+        $pattern = '/@M2C2=(\{[^}]+\})/';
 
-                // Perform the regex match
-                if ( preg_match( $pattern, $field[ 'field_annotation' ], $matches ) ) {
-                    // Extract the JSON string
-                    $jsonString = $matches[ 1 ];
+        // Array to store the extracted JSON
+        $m2c2Settings = [];
 
-                    // Decode the JSON string into an associative array
-                    $m2c2Settings = json_decode( $jsonString, true );
+        // Perform the regex match
+        if ( preg_match( $pattern, $field[ 'field_annotation' ], $matches ) ) {
+            // Extract the JSON string
+            $jsonString = $matches[ 1 ];
 
-                    echo 'M2C2 Settings: <br>';
-                    echo '<pre>';
-                    print_r( $m2c2Settings );
-                    echo '</pre>';
+            // Decode the JSON string into an associative array
+            $m2c2Settings = json_decode( $jsonString, true );
 
-                    // Check for JSON decoding errors
-                    if ( json_last_error() === JSON_ERROR_NONE ) {
-                        // Verify we have all the correct keys by cross-referencing $M2C2_JSON
-                        $isValidM2C2 = true;
+            // Check for JSON decoding errors
+            if ( json_last_error() === JSON_ERROR_NONE ) {
+                // Verify we have all the correct keys by cross-referencing $M2C2_JSON
+                $isValidM2C2 = true;
 
-                        // Check for top-level keys
-                        foreach ( self::$M2C2_JSON as $key ) {
-                            if ( !array_key_exists( $key, $m2c2Settings ) ) {
-                                $isValidM2C2 = false;
+                // Check for top-level keys
+                foreach ( self::$M2C2_JSON as $key ) {
+                    if ( !array_key_exists( $key, $m2c2Settings ) ) {
+                        $isValidM2C2 = false;
+                        break;
+                    }
+                }
+
+                // Check that $m2c2Settings[ 'fields' ] is an array
+                if ( !isset( $m2c2Settings[ 'fields' ] ) || !is_array( $m2c2Settings[ 'fields' ] ) ) {
+                    $isValidM2C2 = false;
+                }
+
+                // Check all field names in $m2c2Settings[ 'fields' ] exist in the dictionary
+                if ( isset( $m2c2Settings[ 'fields' ] ) && is_array( $m2c2Settings[ 'fields' ] ) ) {
+                    foreach ( $m2c2Settings[ 'fields' ] as $trialNum => $fieldName ) {
+                        $hasField = false;
+                        foreach ( $instrument_dict as $dictField ) {
+                            if ( $dictField[ 'field_name' ] == $fieldName ) {
+                                $hasField = true;
                                 break;
                             }
                         }
 
-                        // Check that $m2c2Settings[ 'fields' ] is an array
-                        if ( !isset( $m2c2Settings[ 'fields' ] ) || !is_array( $m2c2Settings[ 'fields' ] ) ) {
+                        if ( !$hasField ) {
+                            echo "<script>console.log('missing at least one field');</script>";
                             $isValidM2C2 = false;
+                            break;
                         }
-
-                        // Check all field names in $m2c2Settings[ 'fields' ] exist in the dictionary
-                        if ( isset( $m2c2Settings[ 'fields' ] ) && is_array( $m2c2Settings[ 'fields' ] ) ) {
-                            foreach ( $m2c2Settings[ 'fields' ] as $trialNum => $fieldName ) {
-                                $hasField = false;
-                                foreach ( $instrument_dict as $dictField ) {
-                                    if ( $dictField[ 'field_name' ] == $fieldName ) {
-                                        $hasField = true;
-                                        break;
-                                    }
-                                }
-
-                                if ( !$hasField ) {
-                                    echo "<script>console.log('missing at least one field');</script>";
-                                    $isValidM2C2 = false;
-                                    break;
-                                }
-                            }
-
-                        } else {
-                            $isValidM2C2 = false;
-                            // trialdata is missing or not an array
-                        }
-
-                        // Check that $m2c2Settings[ 'activity_name' ] is one of the valid activity names
-                        if ( !in_array( $m2c2Settings[ 'activity_name' ], self::$M2C2_SETTINGS_ACTIVITY_NAMES ) ) {
-                            echo "<script>console.log('activity_name is not valid');</script>";
-                            $isValidM2C2 = false;
-                        }
-
-                        // Check that $m2c2Settings[ 'admin_type' ] is one of the valid admin types
-                        if ( !in_array( $m2c2Settings[ 'admin_type' ], self::$M2C2_SETTINGS_ADMIN_TYPES ) ) {
-                            echo "<script>console.log('admin_type is not valid');</script>";
-                            $isValidM2C2 = false;
-                        }
-
-                        // check that $m2c2Settings[ 'width' ] and $m2c2Settings[ 'height' ] are integers
-                        if ( !is_int( $m2c2Settings[ 'width' ] ) || !is_int( $m2c2Settings[ 'height' ] ) ) {
-                            echo "<script>console.log('height/width is not valid');</script>";
-                            $isValidM2C2 = false;
-                        }
-
-                        // check that $m2c2Settings[ 'show_quit_button' ] is a boolean
-                        if ( !is_bool( $m2c2Settings[ 'show_quit_button' ] ) ) {
-                            echo "<script>console.log('show_quit_button is not valid, type is " . $type . "');</script>";
-                            $isValidM2C2 = false;
-                        }
-                    } else {
-                        echo "<script>alert('JSON decoding error: " . json_last_error() . "');</script>";
-                        // '0' means 'no error'
-                        $isValidM2C2 = false;
-                        // JSON decoding error
                     }
+
+                } else {
+                    $isValidM2C2 = false;
+                    // trialdata is missing or not an array
                 }
 
-                if ( $isValidM2C2 ) {
-                    // Call the new function
-                    $this->processM2C2Field( $field[ 'field_name' ], $m2c2Settings );
+                // Check that $m2c2Settings[ 'activity_name' ] is one of the valid activity names
+                if ( !in_array( $m2c2Settings[ 'activity_name' ], self::$M2C2_SETTINGS_ACTIVITY_NAMES ) ) {
+                    echo "<script>console.log('activity_name is not valid');</script>";
+                    $isValidM2C2 = false;
                 }
 
-                echo "<script>console.log('M2C2 field is valid: " . ($isValidM2C2 ? "YES" : "NO") . "');</script>";
+                // Check that $m2c2Settings[ 'admin_type' ] is one of the valid admin types
+                if ( !in_array( $m2c2Settings[ 'admin_type' ], self::$M2C2_SETTINGS_ADMIN_TYPES ) ) {
+                    echo "<script>console.log('admin_type is not valid');</script>";
+                    $isValidM2C2 = false;
+                }
+
+                // check that $m2c2Settings[ 'width' ] and $m2c2Settings[ 'height' ] are integers
+                if ( !is_int( $m2c2Settings[ 'width' ] ) || !is_int( $m2c2Settings[ 'height' ] ) ) {
+                    echo "<script>console.log('height/width is not valid');</script>";
+                    $isValidM2C2 = false;
+                }
+
+                // check that $m2c2Settings[ 'show_quit_button' ] is a boolean
+                if ( !is_bool( $m2c2Settings[ 'show_quit_button' ] ) ) {
+                    echo "<script>console.log('show_quit_button is not valid, type is " . $type . "');</script>";
+                    $isValidM2C2 = false;
+                }
+            } else {
+                echo "<script>alert('JSON decoding error: " . json_last_error() . "');</script>";
+                // '0' means 'no error'
+                $isValidM2C2 = false;
+                // JSON decoding error
             }
         }
+
+        if ( $isValidM2C2 ) {
+            // Call the new function
+            $this->processM2C2Field( $field[ 'field_name' ], $m2c2Settings );
+        }
     }
+
 
     // New function to process the M2C2 field
 
