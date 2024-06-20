@@ -63,10 +63,10 @@ echo "<tbody>";
 
 while($row = $result->fetch_assoc()){
     echo "<tr>";
-    echo "<td>" . $row['log_id'] . "</td>";
-    echo "<td>" . $row['timestamp'] . "</td>";
-    echo "<td>" . $row['record'] . "</td>";
-    echo "<td>" . $row[M2C2_LOGGING_INVALID_CONFIG_PARAM] . "</td>";
+    echo "<td>" . $module->escape($row['log_id']) . "</td>";
+    echo "<td>" . $module->escape($row['timestamp']) . "</td>";
+    echo "<td>" . $module->escape($row['record']) . "</td>";
+    echo "<td>" . $module->escape($row[M2C2_LOGGING_INVALID_CONFIG_PARAM]) . "</td>";
     echo "</tr>";
 }
 
@@ -88,7 +88,7 @@ echo "<th>record</th>";
 
 // Add headers for each of the launch log parameters
 foreach (M2C2_LAUNCH_LOG_PARAMS as $param) {
-    echo "<th>" . $param . "</th>";
+    echo "<th>" . $module->escape($param) . "</th>";
 }
 
 echo "</tr>";
@@ -97,13 +97,13 @@ echo "<tbody>";
 
 while($row = $resultLaunch->fetch_assoc()){
     echo "<tr>";
-    echo "<td>" . $row['log_id'] . "</td>";
-    echo "<td>" . $row['timestamp'] . "</td>";
-    echo "<td>" . $row['record'] . "</td>";
+    echo "<td>" . $module->escape($row['log_id']) . "</td>";
+    echo "<td>" . $module->escape($row['timestamp']) . "</td>";
+    echo "<td>" . $module->escape($row['record']) . "</td>";
 
     // Add data for each of the launch log parameters
     foreach (M2C2_LAUNCH_LOG_PARAMS as $param) {
-        echo "<td>" . $row[$param] . "</td>";
+        echo "<td>" . $module->escape($row[$param]) . "</td>";
     }
 
     echo "</tr>";
