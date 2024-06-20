@@ -57,16 +57,6 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
         // Regular expression to match @M2C2 and capture the JSON part
         $pattern = '/@M2C2=(\{[^}]+\})/';
 
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Missing '" . htmlspecialchars($key, ENT_QUOTES, "UTF-8") . "'."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Fields is not an array."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Field " . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . " is missing from data dictionary."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Activity_name is not valid."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Admin_type is not valid."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Width is not valid."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Height is not valid."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Show_quit_button is not valid."));
-        $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "JSON decoding error " . json_last_error_msg() . "."));
-
         // Perform the regex match
         if (preg_match($pattern, $field['field_annotation'], $matches)) {
             // Extract the JSON string
