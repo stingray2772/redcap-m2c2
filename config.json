@@ -9,5 +9,27 @@
             "email": "cjj5167@psu.edu",
             "institution": "PSU"
         }
+    ],
+    "links": {
+        "project": [
+            {
+                "name": "M2C2 Docs",
+                "icon": "fas fa-info-circle",
+                "url": "m2c2-docs.php",
+                "show-header-and-footer": true
+            },
+            {
+                "name": "M2C2 Log Viewer",
+                "icon": "fas fa-receipt",
+                "url": "m2c2-log-viewer.php",
+                "show-header-and-footer": true
+            }
+        ]
+    },
+    "action-tags": [
+       {
+          "tag": "@M2C2",
+          "description": "A description for this action tag."
+       }
     ]
 }
