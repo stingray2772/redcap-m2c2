@@ -24,4 +24,4 @@ Please visit the external module documentation for information on implementation
 
 ### Example
 
-An example can be found in the examples directory or by visiting [this link](https://github.com/m2c2-project/m2c2kit/blob/main/examples/sample-data-dictionary.csv).
+An example can be found in the examples directory or by visiting [this link](examples/sample-data-dictionary.csv).
