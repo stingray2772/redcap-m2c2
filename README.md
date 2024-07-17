@@ -10,6 +10,8 @@ m2c2kit is a library for cross-platform cognitive assessments. It is produced by
 
 For more information about m2c2kit please visit https://m2c2-project.github.io/m2c2kit/ and https://github.com/m2c2-project/m2c2kit.
 
+---
+
 # M2C2 REDCap External Module
 
 ### What does it do?
