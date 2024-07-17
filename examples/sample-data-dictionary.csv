@@ -1,0 +1,17 @@
+"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+record_id,init,,text,"Record ID",,,,,,,,,,,,,
+first_name,init,,text,"First Name:",,,,,,,,,,,,,
+last_name,init,,text,"Last Name",,,,,,,,,,,,,
+m2c2_symbol_search_trial_1,symbol_search,,notes,,,,,,,,,,,,,," @M2C2={
+    ""activity_name"": ""symbol-search"",
+    ""api_key"": ""demo"",
+    ""study_id"": ""demo"",
+    ""width"": 400,
+    ""height"": 1000,
+    ""show_quit_button"": false,
+    ""participant_id"": ""None"",
+    ""admin_type"": ""qualtrics"",
+    ""fields"": [""m2c2_symbol_search_trial_1"",""m2c2_symbol_search_trial_2""]
+}"
+m2c2_symbol_search_trial_2,symbol_search,,notes,,,,,,,,,,,,,,
+comments,closing,,notes,"Do you have any comments? Please share them below...",,,,,,,,,,,,,

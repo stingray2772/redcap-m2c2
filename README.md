@@ -8,7 +8,7 @@ _a library for cross-platform cognitive assessments_
 
 m2c2kit is a library for cross-platform cognitive assessments. It is produced by the Ambulatory Methods for Measuring Cognitive Change research project (Award #U2CAG060408), sponsored by the [National Institute on Aging](https://www.nia.nih.gov/).
 
-For more information about m2c2kit please visit https://m2c2-project.github.io/m2c2kit/ and https://github.com/m2c2-project/m2c2kit.
+For more information about m2c2kit please visit [m2c2kit documentation](https://m2c2-project.github.io/m2c2kit/) and the [m2c2kit GitHub repository](https://github.com/m2c2-project/m2c2kit).
 
 ---
 
@@ -21,3 +21,7 @@ This external module will allow you to deploy m2c2kit cognitive assessments from
 ### How do I implement in my REDCap project?
 
 Please visit the external module documentation for information on implementation.
+
+### Example
+
+An example can be found in the examples directory or by visiting [this link](https://github.com/m2c2-project/m2c2kit/blob/main/examples/sample-data-dictionary.csv).
