@@ -6,9 +6,9 @@ _a library for cross-platform cognitive assessments_
 
 </div>
 
-m2c2kit is a library for cross-platform cognitive assessments. It is produced by the Ambulatory Methods for Measuring Cognitive Change research project (Award #U2CAG060408), sponsored by the [National Institute on Aging](https://www.nia.nih.gov/).
+m2c2kit is a library for cross-platform cognitive assessments. It is produced by the Ambulatory Methods for Measuring Cognitive Change research project (Award #U2CAG060408), sponsored by the [National Institute on Aging](https://www.nia.nih.gov/){:target="_blank"}.
 
-For more information about m2c2kit please visit [m2c2kit documentation](https://m2c2-project.github.io/m2c2kit/) and the [m2c2kit GitHub repository](https://github.com/m2c2-project/m2c2kit).
+For more information about m2c2kit please visit [m2c2kit documentation](https://m2c2-project.github.io/m2c2kit/){:target="_blank"} and the [m2c2kit GitHub repository](https://github.com/m2c2-project/m2c2kit){:target="_blank"}.
 
 ---
 
@@ -24,4 +24,4 @@ Please visit the external module documentation for information on implementation
 
 ### Example
 
-An example can be found in the examples directory or by visiting [this link](examples/sample-data-dictionary.csv).
+An example can be found in the examples directory or by visiting [this link](examples/sample-data-dictionary.csv) (right-click and choose "Save link as..." to download the file).
