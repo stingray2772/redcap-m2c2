@@ -3,7 +3,7 @@ namespace PSU\M2C2;
 
 $purgeURL = $module->getUrl(M2C2_PURGE_URL);
 
-echo "<h3>M2C2 Log Viewer</h3>";
+echo "<h3>M2C2 EM Log Viewer</h3>";
 
 $pseudoSql = "SELECT log_id, timestamp, record, message, " . M2C2_LOGGING_INVALID_CONFIG_PARAM . " WHERE message = ?";
 $parameters = [M2C2_LOGGING_INVALID_CONFIG];
@@ -73,7 +73,7 @@ while($row = $result->fetch_assoc()){
 echo "</tbody>";
 echo "</table>";
 
-$pseudoSqlLaunch = "SELECT log_id, timestamp, record, message, " . implode(',', M2C2_LAUNCH_LOG_PARAMS) . " WHERE message = ?";
+$pseudoSqlLaunch = "SELECT log_id, timestamp, record, message, " . implode(', ', M2C2_LOGGING_LAUNCH_PARAMS) . " WHERE message = ?";
 $parametersLaunch = [M2C2_LOGGING_LAUNCHING];
 
 $resultLaunch = $module->queryLogs($pseudoSqlLaunch, $parametersLaunch);
@@ -87,7 +87,7 @@ echo "<th>timestamp</th>";
 echo "<th>record</th>";
 
 // Add headers for each of the launch log parameters
-foreach (M2C2_LAUNCH_LOG_PARAMS as $param) {
+foreach (M2C2_JSON as $param) {
     echo "<th>" . $module->escape($param) . "</th>";
 }
 
@@ -102,7 +102,7 @@ while($row = $resultLaunch->fetch_assoc()){
     echo "<td>" . $module->escape($row['record']) . "</td>";
 
     // Add data for each of the launch log parameters
-    foreach (M2C2_LAUNCH_LOG_PARAMS as $param) {
+    foreach (M2C2_JSON as $param) {
         echo "<td>" . $module->escape($row[$param]) . "</td>";
     }
 

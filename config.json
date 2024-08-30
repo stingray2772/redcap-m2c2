@@ -14,13 +14,13 @@
     "links": {
         "project": [
             {
-                "name": "M2C2 Log Viewer",
+                "name": "M2C2 EM Log Viewer",
                 "icon": "fas fa-receipt",
                 "url": "m2c2-log-viewer.php",
                 "show-header-and-footer": true
             },
             {
-                "name": "M2C2 Docs",
+                "name": "M2C2 EM Docs",
                 "icon": "fas fa-info-circle",
                 "url": "m2c2-docs.php",
                 "show-header-and-footer": true
@@ -44,7 +44,7 @@
     "action-tags": [
         {
             "tag": "@M2C2",
-            "description": "Used to deploy m2c2kit cognitive assessments. Please visit the 'M2C2 Docs' page located in the 'External Modules' side menu for more information.<p>The @M2C2 action tag should be added to the first note box for each assessment. The action tag should be in the following format:</p><code>@M2C2={<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_name\":\"activity_name\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"api_key\":\"api_key\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"study_id\":\"study_id\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"width\":\"width\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"height\":\"height\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"show_quit_button\":\"show_quit_button\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"participant_id\":\"participant_id\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"admin_type\":\"admin_type\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"redcap_fields\":\"redcap_fields\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"number_of_trials\":\"number_of_trials\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"session_id\":\"session_id\"<br>}</code><br><br><p>Example for a Symbol Search assessment using two trials (note boxes named m2c2_symbol_search_trial_1 and m2c2_symbol_search_trial_2):</p><code>@M2C2={<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_name\":\"symbol-search\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"api_key\":\"demo\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"study_id\":\"demo\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"width\":400,<br>&nbsp;&nbsp;&nbsp;&nbsp;\"height\":1000,<br>&nbsp;&nbsp;&nbsp;&nbsp;\"show_quit_button\":false,<br>&nbsp;&nbsp;&nbsp;&nbsp;\"participant_id\":\"None\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"admin_type\":\"qualtrics\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"fields\":[\"m2c2_symbol_search_trial_1\",\"m2c2_symbol_search_trial_2\"]<br>}</code>"
+            "description": "Used to deploy m2c2kit cognitive assessments. Please visit the 'M2C2 EM Docs' page located in the 'External Modules' side menu for more information.<p>The @M2C2 action tag should be added to the first note box for each assessment. The action tag should be in the following format:</p><code>@M2C2={<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_name\":\"activity_name\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_version\":\"activity_version\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"redcap_fields\":\"redcap_fields\"<br>}</code><br><br><p>Example for a Symbol Search assessment using two trials (note boxes named m2c2_symbol_search_trial_1 and m2c2_symbol_search_trial_2):</p><code>@M2C2={<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_name\":\"symbol-search\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"activity_version\":\"0.8.19\",<br>&nbsp;&nbsp;&nbsp;&nbsp;\"redcap_fields\":[\"m2c2_symbol_search_trial_1\",\"m2c2_symbol_search_trial_2\"]<br>}</code>"
         }
     ]
 }
