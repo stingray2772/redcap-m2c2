@@ -20,7 +20,14 @@ const M2C2_JS_FILE = 'js/m2c2.js';
 
 class M2C2 extends \ExternalModules\AbstractExternalModule {
 
+    
+
     function redcap_survey_page($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
+        echo '<script>console.log("loading js cory");</script>';
+        $this->initializeJavascriptModuleObject();
+        echo '<script>const module = ' . $this->framework->getJavascriptModuleObjectName() . ';</script>';
+        echo '<script>console.log("finished js cory");</script>';
+
         // Get Instrument Data Dictionary
         $instrument_dict_json = REDCap::getDataDictionary($this->getProjectId(), 'json', false, null, array($instrument));
         $instrument_dict = json_decode($instrument_dict_json, true);
@@ -137,5 +144,102 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
         } catch (Exception $ex) {
             $this->log(M2C2_LOGGING_INVALID_CONFIG . "M2C2 External Module Error: " . $ex->getMessage());
         }
+    }
+
+    protected function saveToFileRepository($filename, $file_contents, $file_extension)
+    {
+        // Upload the compiled report to the File Repository
+        $errors = array();
+        $database_success = FALSE;
+        $upload_success = FALSE;
+
+        $dummy_file_name = $filename;
+        $dummy_file_name = preg_replace("/[^a-zA-Z-._0-9]/","_",$dummy_file_name);
+        $dummy_file_name = str_replace("__","_",$dummy_file_name);
+        $dummy_file_name = str_replace("__","_",$dummy_file_name);
+
+        $stored_name = date('YmdHis') . "_pid" . $this->pid . "_" . generateRandomHash(6) . ".$file_extension";
+
+        $upload_success = file_put_contents(EDOC_PATH . $stored_name, $file_contents);
+
+        if ($upload_success !== FALSE)
+        {
+            $dummy_file_size = $upload_success;
+            $dummy_file_type = "application/$file_extension";
+
+            $file_repo_name = date("Y/m/d H:i:s");
+
+            $query = $this->framework->createQuery();
+            $query->add("INSERT INTO redcap_docs (project_id,docs_date,docs_name,docs_size,docs_type,docs_comment,docs_rights) VALUES (?, CURRENT_DATE, ?, ?, ?, ?, NULL)",
+                        [$this->pid, "$dummy_file_name.$file_extension", $dummy_file_size, $dummy_file_type, "$file_repo_name - $filename ($this->userid)"]);
+
+            if ($query->execute())
+            {
+                $docs_id = db_insert_id();
+
+                $query = $this->framework->createQuery();
+                $query->add("INSERT INTO redcap_edocs_metadata (stored_name,mime_type,doc_name,doc_size,file_extension,project_id,stored_date) VALUES(?,?,?,?,?,?,?)",
+                            [$stored_name, $dummy_file_type, "$dummy_file_name.$file_extension", $dummy_file_size, $file_extension, $this->pid, date('Y-m-d H:i:s')]);
+
+                if ($query->execute())
+                {
+                    $doc_id = db_insert_id();
+
+                    $query = $this->framework->createQuery();
+                    $query->add("INSERT INTO redcap_docs_to_edocs (docs_id,doc_id) VALUES (?,?)", [$docs_id, $doc_id]);
+
+                    if ($query->execute())
+                    {
+                        $context_msg_insert = "{$lang['docs_22']} {$lang['docs_08']}";
+
+                        // Logging
+                        REDCap::logEvent("Custom Template Engine - Uploaded document to file repository", "Successfully uploaded $filename");
+                        $context_msg = str_replace('{fetched}', '', $context_msg_insert);
+                        $database_success = TRUE;
+                    }
+                    else
+                    {
+                        /* if this failed, we need to roll back redcap_edocs_metadata and redcap_docs */
+                        $query = $this->framework->createQuery();
+                        $query->add("DELETE FROM redcap_edocs_metadata WHERE doc_id=?", [$doc_id]);
+                        $query->execute();
+
+                        $query = $this->framework->createQuery();
+                        $query->add("DELETE FROM redcap_docs WHERE docs_id=?", [$docs_id]);
+                        $query->execute();
+
+                        $this->deleteRepositoryFile($stored_name);
+                    }
+                }
+                else
+                {
+                    /* if we failed here, we need to roll back redcap_docs */
+                    $query = $this->framework->createQuery();
+                    $query->add("DELETE FROM redcap_docs WHERE docs_id=?", [$docs_id]);
+                    $query->execute();
+
+                    $this->deleteRepositoryFile($stored_name);
+                }
+            }
+            else
+            {
+                /* if we failed here, we need to delete the file */
+                $this->deleteRepositoryFile($stored_name);
+            }
+        }
+
+        if ($database_success === FALSE)
+        {
+            $context_msg = "<b>{$lang['global_01']}{$lang['colon']} {$lang['docs_47']}</b><br>" . $lang['docs_65'] . ' ' . maxUploadSizeFileRespository().'MB'.$lang['period'];
+
+            if (SUPER_USER)
+            {
+                $context_msg .= '<br><br>' . $lang['system_config_69'];
+            }
+
+            return $context_msg;
+        }
+
+        return true;
     }
 }

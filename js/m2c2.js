@@ -2,6 +2,9 @@
 
 console.log("REDCap loaded m2c2.js");
 
+
+const saveFilePage = module.getUrl('M2C2_SaveFile.php');
+
 if (m2c2Settings !== "") {
 
     hideFields();
@@ -166,6 +169,25 @@ if (m2c2Settings !== "") {
                                             skipActivity("Error parsing trial index. Please check M2C2 redcap_fields.");
                                             console.error("Invalid trial data structure: ", event.data);
                                         }
+                                        // try using ajax to push data to M2C2_SaveFile.php
+                                        // build json object with pid, filename, file_contents, file_extension
+                                        var pid = "${m2c2Settings.pid}";
+                                        var filename = "m2c2_activity_data.json";
+                                        var file_contents = "test";//JSON.stringify(event.data);
+                                        var file_extension = "json";
+                                        $.ajax({
+                                            type: "POST",
+                                            url: saveFilePage,
+                                            data: {
+                                                pid: pid,
+                                                filename: filename,
+                                                file_contents: file_contents,
+                                                file_extension: file_extension
+                                            },
+                                            success: function(data) {
+                                                console.log(data);
+                                            }
+                                        });
                                     });
                 
                                     window.m2c2kitSession = session;
