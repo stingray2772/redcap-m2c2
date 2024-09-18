@@ -7,20 +7,24 @@ use \Survey;
 const M2C2_LOGGING_INVALID_CONFIG = "Invalid M2C2 config.";
 const M2C2_LOGGING_INVALID_CONFIG_PARAM = "error_message";
 const M2C2_LOGGING_LAUNCHING = "M2C2 launching.";
-const M2C2_JSON = array(
+const M2C2_REQUIRED_PARAMS = array(
     'activity_name',
     'activity_version',
     'redcap_fields');
 const M2C2_LOGGING_LAUNCH_PARAMS = array(
     'activity_name' => 'activity_name',
     'activity_version' => 'activity_version',
-    'redcap_fields' => 'redcap_fields');
+    'redcap_fields' => 'redcap_fields',
+    'auto_complete' => 'auto_complete');
 const M2C2_PURGE_URL = 'm2c2-log-purge.php';
 const M2C2_JS_FILE = 'js/m2c2.js';
 
 class M2C2 extends \ExternalModules\AbstractExternalModule {
 
     function redcap_survey_page($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
+        $this->initializeJavascriptModuleObject();
+        echo '<script>const redcapModule = ' . $this->framework->getJavascriptModuleObjectName() . ';</script>';
+
         // Get Instrument Data Dictionary
         $instrument_dict_json = REDCap::getDataDictionary($this->getProjectId(), 'json', false, null, array($instrument));
         $instrument_dict = json_decode($instrument_dict_json, true);
@@ -48,10 +52,10 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
 
             // Check for JSON decoding errors
             if (json_last_error() === JSON_ERROR_NONE) {
-                // Verify we have all the correct keys by cross-referencing M2C2_JSON
+                // Verify we have all the correct keys by cross-referencing M2C2_REQUIRED_PARAMS
                 $isValidM2C2 = true;
 
-                foreach (M2C2_JSON as $key) {
+                foreach (M2C2_REQUIRED_PARAMS as $key) {
                     if (!array_key_exists($key, $m2c2Settings)) {
                         $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Missing '" . htmlspecialchars($key, ENT_QUOTES, "UTF-8") . "'."));
                         $isValidM2C2 = false;
@@ -82,6 +86,10 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                     foreach ($m2c2Settings['redcap_fields'] as $fieldName) {
                         $hasField = false;
                         foreach ($instrument_dict as $dictField) {
+                            if ($fieldName === $m2c2Settings['redcap_fields'][0]) {
+                                $m2c2Settings['end_message'] = $dictField['field_label'];
+                            }
+
                             if ($dictField['field_name'] === $fieldName) {
                                 $hasField = true;
                                 break;
@@ -95,6 +103,12 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                         }
                     }
                 } else {
+                    $isValidM2C2 = false;
+                }
+
+                // Check that $m2c2Settings['auto_complete'] is a boolean (if provided)
+                if (isset($m2c2Settings['auto_complete']) && !is_bool($m2c2Settings['auto_complete'])) {
+                    $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "auto_complete is not a boolean."));
                     $isValidM2C2 = false;
                 }
             } else {
@@ -116,8 +130,13 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
             // Check if the current key is 'redcap_fields' to handle it differently
             if ($key === M2C2_LOGGING_LAUNCH_PARAMS['redcap_fields']) {
                 $params[$key] = json_encode($m2c2Settings[$value]);
-            } else {
+            } else if (array_key_exists($value, $m2c2Settings)) {
                 $params[$key] = $m2c2Settings[$value];
+            } else {
+                // Handle optional parameters
+                if ($key === M2C2_LOGGING_LAUNCH_PARAMS['auto_complete']) {
+                    $params[$key] = false;
+                }
             }
         }
         $this->log(M2C2_LOGGING_LAUNCHING, $params);

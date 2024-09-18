@@ -3,8 +3,8 @@ record_id,init,,text,"Record ID",,,,,,,,,,,,,
 first_name,init,,text,"First Name:",,,,,,,,,,,,,
 last_name,init,,text,"Last Name",,,,,,,,,,,,,
 m2c2_symbol_search_trial_1,symbol_search,,notes,,,,,,,,,,,,,," @M2C2={
-    ""activity_name"": ""symbol-search"",
-    ""activity_version"": ""activity_version"",
+    ""activity_name"": ""assessment-symbol-search"",
+    ""activity_version"": ""0.8.19"",
     ""redcap_fields"": [""m2c2_symbol_search_trial_1"",""m2c2_symbol_search_trial_2""]
 }"
 m2c2_symbol_search_trial_2,symbol_search,,notes,,,,,,,,,,,,,,
