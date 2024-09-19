@@ -11,31 +11,32 @@ $parameters = [M2C2_LOGGING_INVALID_CONFIG];
 $result = $module->queryLogs($pseudoSql, $parameters);
 
 echo "<style>
-    table {
+    .m2c2-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 20px 0;
+        margin-left: 20px;
+        margin-right:20px;
         text-align: left;
     }
-    table, th, td {
+    .m2c2-table, .m2c2-table th, .m2c2-table td {
         border: 1px solid #dddddd;
     }
-    th, td {
+    .m2c2-th, .m2c2-td {
         padding: 12px;
     }
-    th {
+    .m2c2-th {
         background-color: #f4f4f4;
         color: #333;
     }
-    tr:nth-child(even) {
+    .m2c2-tr:nth-child(even) {
         background-color: #f9f9f9;
     }
-    caption {
+    .m2c2-caption {
         caption-side: top;
         font-weight: bold;
         padding: 10px;
     }
-    .purge-button {
+    .m2c2-purge-button {
         background-color: #ff4d4d;
         color: white;
         border: none;
@@ -44,29 +45,29 @@ echo "<style>
         font-size: 16px;
         margin: 20px 0;
     }
-    .purge-button i {
+    .m2c2-purge-button i {
         margin-right: 5px;
     }
 </style>";
 
-echo "<table>";
-echo "<caption>Error Log</caption>";
+echo "<table class='m2c2-table'>";
+echo "<caption class='m2c2-caption'>Error Log</caption>";
 echo "<thead>";
 echo "<tr>";
-echo "<th>log_id</th>";
-echo "<th>timestamp</th>";
-echo "<th>record</th>";
-echo "<th>" . M2C2_LOGGING_INVALID_CONFIG_PARAM . "</th>";
+echo "<th class='m2c2-th'>log_id</th>";
+echo "<th class='m2c2-th'>timestamp</th>";
+echo "<th class='m2c2-th'>record</th>";
+echo "<th class='m2c2-th'>" . M2C2_LOGGING_INVALID_CONFIG_PARAM . "</th>";
 echo "</tr>";
 echo "</thead>";
 echo "<tbody>";
 
 while($row = $result->fetch_assoc()){
-    echo "<tr>";
-    echo "<td>" . $module->escape($row['log_id']) . "</td>";
-    echo "<td>" . $module->escape($row['timestamp']) . "</td>";
-    echo "<td>" . $module->escape($row['record']) . "</td>";
-    echo "<td>" . $module->escape($row[M2C2_LOGGING_INVALID_CONFIG_PARAM]) . "</td>";
+    echo "<tr class='m2c2-tr'>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['log_id']) . "</td>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['timestamp']) . "</td>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['record']) . "</td>";
+    echo "<td class='m2c2-td'>" . $module->escape($row[M2C2_LOGGING_INVALID_CONFIG_PARAM]) . "</td>";
     echo "</tr>";
 }
 
@@ -78,17 +79,17 @@ $parametersLaunch = [M2C2_LOGGING_LAUNCHING];
 
 $resultLaunch = $module->queryLogs($pseudoSqlLaunch, $parametersLaunch);
 
-echo "<table>";
-echo "<caption>Launch Log Viewer</caption>";
+echo "<table class='m2c2-table'>";
+echo "<caption class='m2c2-caption'>Launch Log Viewer</caption>";
 echo "<thead>";
 echo "<tr>";
-echo "<th>log_id</th>";
-echo "<th>timestamp</th>";
-echo "<th>record</th>";
+echo "<th class='m2c2-th'>log_id</th>";
+echo "<th class='m2c2-th'>timestamp</th>";
+echo "<th class='m2c2-th'>record</th>";
 
 // Add headers for each of the launch log parameters
-foreach (M2C2_JSON as $param) {
-    echo "<th>" . $module->escape($param) . "</th>";
+foreach (M2C2_LOGGING_LAUNCH_PARAMS as $param) {
+    echo "<th class='m2c2-th'>" . $module->escape($param) . "</th>";
 }
 
 echo "</tr>";
@@ -96,14 +97,14 @@ echo "</thead>";
 echo "<tbody>";
 
 while($row = $resultLaunch->fetch_assoc()){
-    echo "<tr>";
-    echo "<td>" . $module->escape($row['log_id']) . "</td>";
-    echo "<td>" . $module->escape($row['timestamp']) . "</td>";
-    echo "<td>" . $module->escape($row['record']) . "</td>";
+    echo "<tr class='m2c2-tr'>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['log_id']) . "</td>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['timestamp']) . "</td>";
+    echo "<td class='m2c2-td'>" . $module->escape($row['record']) . "</td>";
 
     // Add data for each of the launch log parameters
-    foreach (M2C2_JSON as $param) {
-        echo "<td>" . $module->escape($row[$param]) . "</td>";
+    foreach (M2C2_LOGGING_LAUNCH_PARAMS as $param) {
+        echo "<td class='m2c2-td'>" . $module->escape($row[$param]) . "</td>";
     }
 
     echo "</tr>";
@@ -113,11 +114,11 @@ echo "</tbody>";
 echo "</table>";
 
 // Add the purge button
-echo "<button class='purge-button' onclick='confirmPurge()'><i class='fas fa-trash-alt'></i> Purge M2C2 Logs</button>";
+echo "<button class='m2c2-purge-button' onclick='confirmPurge()'><i class='fas fa-trash-alt'></i> Purge M2C2 Logs</button>";
 
 // JavaScript for confirmation prompt
 echo "<script>
-function confirmPurge(purgeURL) {
+function confirmPurge() {
   simpleDialog('Are you sure you want to cancel this request?', 'Cancel Request', 1, 400);
   var confirm = $('<button>', {
     'class': 'ui-button ui-corner-all ui-widget',
