@@ -36,6 +36,13 @@
             <li>For multi-language support, use MLM to translate the field label.</li>
         </ul>
 
+        <h3>Additional Parameters (Optional)</h3>
+        <ul>
+            <li>The <code>additional_parameters</code> setting is optional.</li>
+            <li>This allows for additional parameters to be utilized. Please refer to M2C2Kit documentation for more information on these parameters.</li>
+            <li>The format of this setting is a string with key-value pairs separated by commas (e.g., <code>"show_quit_button:false,locale:en-US"</code>).</li>
+        </ul>
+
         <h3>REDCap Setup</h3>
         <ol>
             <li><strong>Enable M2C2:</strong> Ensure the M2C2 External Module is enabled in your REDCap instance and project (contact your REDCap administrator if needed).</li>
@@ -56,7 +63,8 @@
         "activity_name":"&lt;activity_name&gt;",
         "activity_version":"&lt;activity_version&gt;",
         "redcap_fields": ["&lt;redcap_field_1&gt;", "&lt;redcap_field_2&gt;"],
-        "auto_complete": true  // OPTIONAL
+        "auto_complete": true,  // OPTIONAL
+        "additional_parameters": "show_quit_button:false,locale:en-US" // OPTIONAL
     }</code></pre>
 
         <h5>Example</h5>
@@ -66,7 +74,8 @@
         "activity_name":"assessment-symbol-search",
         "activity_version":"0.8.19",
         "redcap_fields": ["m2c2_symbol_search_trial_1","m2c2_symbol_search_trial_2"],
-        "auto_complete": true
+        "auto_complete": true,
+        "additional_parameters": "show_quit_button:false"
     }</code></pre>
     </div>
 </div>

@@ -15,6 +15,7 @@ const M2C2_LOGGING_LAUNCH_PARAMS = array(
     'activity_name' => 'activity_name',
     'activity_version' => 'activity_version',
     'redcap_fields' => 'redcap_fields',
+    'additional_parameters' => 'additional_parameters',
     'auto_complete' => 'auto_complete');
 const M2C2_PURGE_URL = 'm2c2-log-purge.php';
 const M2C2_JS_FILE = 'js/m2c2.js';
@@ -110,6 +111,22 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                 if (isset($m2c2Settings['auto_complete']) && !is_bool($m2c2Settings['auto_complete'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "auto_complete is not a boolean."));
                     $isValidM2C2 = false;
+                }
+
+                // Check that $m2c2Settings['additional_params'] is a string containing key:value pairs separated by commas (if provided)
+                if (isset($m2c2Settings['additional_parameters']) && !is_string($m2c2Settings['additional_parameters'])) {
+                    $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "additional_parameters is not a string."));
+                    $isValidM2C2 = false;
+                } else if (isset($m2c2Settings['additional_parameters']) && is_string($m2c2Settings['additional_parameters'])) {
+                    // Check that the string is in the format of key:value pairs separated by commas
+                    $additionalParams = explode(',', $m2c2Settings['additional_parameters']);
+                    foreach ($additionalParams as $param) {
+                        if (strpos($param, ':') === false) {
+                            $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "additional_parameters is not in the format of key:value pairs separated by commas."));
+                            $isValidM2C2 = false;
+                            break;
+                        }
+                    }
                 }
             } else {
                 $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "JSON decoding error " . json_last_error_msg() . "."));

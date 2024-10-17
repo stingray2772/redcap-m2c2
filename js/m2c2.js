@@ -168,6 +168,32 @@ function m2c2GetAssessmentClassNameFromModule(assessmentModule) {
     return assessments[0];
 }
 
+function getAdditionalParameters(number_of_trials, locale) {
+    var additionalParametersObj = {};
+
+    console.log("Checking for additional parameters...");
+    if (m2c2Settings.hasOwnProperty("additional_parameters") && typeof m2c2Settings.additional_parameters === "string") {
+        // parse additional parameters, explode by comma
+        var additionalParameters = m2c2Settings.additional_parameters.split(",");
+        additionalParameters.forEach(function (param) {
+            var keyVal = param.split(":");
+            if (keyVal.length === 2) {
+                additionalParametersObj[keyVal[0]] = keyVal[1];
+            }
+        });
+    }
+
+    // add number_of_trials
+    additionalParametersObj["number_of_trials"] = number_of_trials;
+
+    // add locale
+    if (locale !== null) {
+        additionalParametersObj["locale"] = locale;
+    }
+
+    return additionalParametersObj;
+}
+
 async function m2c2InitializeSession() {
     console.log("Initializing session...");
     const sessionModuleName = "@m2c2kit/session";
@@ -182,16 +208,9 @@ async function m2c2InitializeSession() {
     const assessment = new assessmentModule[assessmentClassName]();
 
     if (m2c2MLMEnabled) {
-        assessment.setParameters({
-            number_of_trials: m2c2Settings.redcap_fields.length,
-            show_quit_button: false,
-            locale: m2c2MLMSelectedLanguage
-        });
+        assessment.setParameters(getAdditionalParameters(m2c2Settings.redcap_fields.length, m2c2MLMSelectedLanguage));
     } else {
-        assessment.setParameters({
-            number_of_trials: m2c2Settings.redcap_fields.length,
-            show_quit_button: false
-        });
+        assessment.setParameters(getAdditionalParameters(m2c2Settings.redcap_fields.length, null));
     }
 
     const session = new sessionModule.Session({
