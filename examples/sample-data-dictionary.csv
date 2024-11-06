@@ -2,12 +2,12 @@
 record_id,init,,text,"Record ID",,,,,,,,,,,,,
 first_name,init,,text,"First Name:",,,,,,,,,,,,,
 last_name,init,,text,"Last Name",,,,,,,,,,,,,
-m2c2_symbol_search_trial_1,symbol_search,,notes,,,,,,,,,,,,,," @M2C2={
+m2c2_assessment_00_trial_data_00,symbol_search,,notes,,,,,,,,,,,,,," @M2C2={
     ""activity_name"": ""assessment-symbol-search"",
-    ""activity_version"": ""0.8.19"",
-    ""redcap_fields"": [""m2c2_symbol_search_trial_1"",""m2c2_symbol_search_trial_2""],
+    ""activity_version"": ""0.8.22"",
+    ""redcap_fields"": [""m2c2_assessment_00_trial_data_00"",""m2c2_assessment_00_trial_data_01""],
     ""auto_complete"": false,
-    ""additional_parameters"": ""show_quit_button:false""
+    ""additional_parameters"": ""show_quit_button=false""
 }"
-m2c2_symbol_search_trial_2,symbol_search,,notes,,,,,,,,,,,,,,
+m2c2_assessment_00_trial_data_01,symbol_search,,notes,,,,,,,,,,,,,,
 comments,closing,,notes,"Do you have any comments? Please share them below...",,,,,,,,,,,,,
