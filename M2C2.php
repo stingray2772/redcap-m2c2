@@ -59,6 +59,7 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                 foreach (M2C2_REQUIRED_PARAMS as $key) {
                     if (!array_key_exists($key, $m2c2Settings)) {
                         $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Missing '" . htmlspecialchars($key, ENT_QUOTES, "UTF-8") . "'."));
+                        echo "<script>console.log('Missing " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ".');</script>";
                         $isValidM2C2 = false;
                         break;
                     }
@@ -67,24 +68,36 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                 // Check that $m2c2Settings['activity_name'] is a string
                 if (!isset($m2c2Settings['activity_name']) || !is_string($m2c2Settings['activity_name'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Activity name is not a string."));
+                    echo "<script>console.log('Activity name is not a string.');</script>";
                     $isValidM2C2 = false;
                 }
 
                 // Check that $m2c2Settings['activity_version'] is a string in format of X.X.X where X is a number
                 if (!isset($m2c2Settings['activity_version']) || !preg_match('/^\d+\.\d+\.\d+$/', $m2c2Settings['activity_version'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Activity version is not in the format of X.X.X."));
+                    echo "<script>console.log('Activity version is not in the format of X.X.X.');</script>";
                     $isValidM2C2 = false;
                 }
 
                 // Check that $m2c2Settings['redcap_fields'] is an array
                 if (!isset($m2c2Settings['redcap_fields']) || !is_array($m2c2Settings['redcap_fields'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "redcap_fields is not an array."));
+                    echo "<script>console.log('redcap_fields is not an array.');</script>";
                     $isValidM2C2 = false;
                 }
 
                 // Check all field names in $m2c2Settings['redcap_fields'] exist in the dictionary
                 if (isset($m2c2Settings['redcap_fields']) && is_array($m2c2Settings['redcap_fields'])) {
                     foreach ($m2c2Settings['redcap_fields'] as $fieldName) {
+
+                        // Check field name is in format of m2c2_assessment_XX_trial_data_XX where XX is a 2 digit number
+                        if (!preg_match('/^m2c2_assessment_\d{2}_trial_data_\d{2}$/', $fieldName)) {
+                            $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Field " . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . " is not in the format of ASSESSMENT_XX_TRIAL_DATA_XX."));
+                            echo "<script>console.log('Field " . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . " is not in the format of m2c2_assessment_XX_trial_data_XX.');</script>";
+                            $isValidM2C2 = false;
+                            break;
+                        }
+
                         $hasField = false;
                         foreach ($instrument_dict as $dictField) {
                             if ($fieldName === $m2c2Settings['redcap_fields'][0]) {
@@ -99,6 +112,7 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
 
                         if (!$hasField) {
                             $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "Field " . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . " is missing from data dictionary."));
+                            echo "<script>console.log('Field " . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . " is missing from data dictionary.');</script>";
                             $isValidM2C2 = false;
                             break;
                         }
@@ -110,19 +124,22 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                 // Check that $m2c2Settings['auto_complete'] is a boolean (if provided)
                 if (isset($m2c2Settings['auto_complete']) && !is_bool($m2c2Settings['auto_complete'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "auto_complete is not a boolean."));
+                    echo "<script>console.log('auto_complete is not a boolean.');</script>";
                     $isValidM2C2 = false;
                 }
 
                 // Check that $m2c2Settings['additional_params'] is a string containing key:value pairs separated by commas (if provided)
                 if (isset($m2c2Settings['additional_parameters']) && !is_string($m2c2Settings['additional_parameters'])) {
                     $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "additional_parameters is not a string."));
+                    echo "<script>console.log('additional_parameters is not a string.');</script>";
                     $isValidM2C2 = false;
                 } else if (isset($m2c2Settings['additional_parameters']) && is_string($m2c2Settings['additional_parameters'])) {
                     // Check that the string is in the format of key:value pairs separated by commas
                     $additionalParams = explode(',', $m2c2Settings['additional_parameters']);
                     foreach ($additionalParams as $param) {
-                        if (strpos($param, ':') === false) {
-                            $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "additional_parameters is not in the format of key:value pairs separated by commas."));
+                        if (strpos($param, '=') === false) {
+                            $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "additional_parameters is not in the format of key=value pairs separated by commas."));
+                            echo "<script>console.log('additional_parameters is not in the format of key=value pairs separated by commas.');</script>";
                             $isValidM2C2 = false;
                             break;
                         }
@@ -130,6 +147,7 @@ class M2C2 extends \ExternalModules\AbstractExternalModule {
                 }
             } else {
                 $this->log(M2C2_LOGGING_INVALID_CONFIG, array(M2C2_LOGGING_INVALID_CONFIG_PARAM => "JSON decoding error " . json_last_error_msg() . "."));
+                echo "<script>console.log('JSON decoding error " . json_last_error_msg() . ".');</script>";
                 $isValidM2C2 = false;
             }
         }

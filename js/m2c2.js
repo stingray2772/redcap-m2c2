@@ -113,7 +113,7 @@ function m2c2BuildAndAddImportMap(cdnUrl) {
             document.head.appendChild(importMapScript);
 
             var esModuleScript = document.createElement("script");
-            esModuleScript.src = "https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js";
+            esModuleScript.src = "https://ga.jspm.io/npm:es-module-shims@1.10.1/dist/es-module-shims.js";
             esModuleScript.type = "module";
             document.head.appendChild(esModuleScript);
 
@@ -176,9 +176,10 @@ function getAdditionalParameters(number_of_trials, locale) {
         // parse additional parameters, explode by comma
         var additionalParameters = m2c2Settings.additional_parameters.split(",");
         additionalParameters.forEach(function (param) {
-            var keyVal = param.split(":");
+            var keyVal = param.split("=");
             if (keyVal.length === 2) {
-                additionalParametersObj[keyVal[0]] = keyVal[1];
+                // trim key and value
+                additionalParametersObj[keyVal[0].trim()] = keyVal[1].trim();
             }
         });
     }

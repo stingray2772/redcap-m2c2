@@ -9,21 +9,21 @@
                 <ul>
                     <li>Plan your project flow carefully.</li>
                     <li>You will need <strong>one note box per trial per assessment</strong>. For example, if your assessment consists of 3 activities with 10 trials each, you will need 30 note boxes.</li>
-                    <li>To ensure clarity, use a consistent naming convention, like <code>assessment_x</code>, where <code>assessment</code> is the name of the activity, and <code>x</code> represents the trial number.</li>
+                    <li>To ensure compatibility with parsing, you must use the naming convention, <code>m2c2_assessment_XX_trial_data_XX</code>, where the first <code>XX</code> represents the order of assessment, and the second <code>XX</code> represents the trial number. Both <code>XX</code> values should be zero based (start with <code>00</code>).</li>
                 </ul>
             </li>
             <li><strong>@M2C2 Action Tag Setup:</strong>
                 <ul>
-                    <li>The action tag must be set up in the first note box of each assessment (Trial 1).</li>
+                    <li>The action tag must be set up in the first note box of each assessment (trial <code>00</code>).</li>
                     <li>This EM will hide the note boxes from the survey participant but will remain visible in data entry mode.</li>
                 </ul>
             </li>
         </ol>
 
-        <h3>Multi-Language Support (MLM)</h3>
+        <h3>Multi-Language Support</h3>
         <p>M2C2 supports multiple languages. To implement this:</p>
         <ul>
-            <li>Code your language preference field using supported language codes (e.g., <code>en-US</code>, <code>es-MX</code>, <code>fr-FR</code>, <code>de-DE</code>).</li>
+            <li>Code your REDCap language preference field using supported language codes (e.g., <code>en-US</code>, <code>es-MX</code>, <code>fr-FR</code>, <code>de-DE</code>).</li>
             <li>For multi-language support, refer to the MLM section of REDCap.</li>
         </ul>
 
@@ -40,7 +40,7 @@
         <ul>
             <li>The <code>additional_parameters</code> setting is optional.</li>
             <li>This allows for additional parameters to be utilized. Please refer to M2C2Kit documentation for more information on these parameters.</li>
-            <li>The format of this setting is a string with key-value pairs separated by commas (e.g., <code>"show_quit_button:false,locale:en-US"</code>).</li>
+            <li>The format of this setting is a string with key-value pairs separated by commas (e.g., <code>"show_quit_button=false,locale=en-US"</code>).</li>
         </ul>
 
         <h3>REDCap Setup</h3>
@@ -52,7 +52,7 @@
                     <li>If using multiple activities within one instrument, set the survey setting to <strong>'Multiple pages'</strong> and use section headers to separate the activities.</li>
                 </ul>
             </li>
-            <li><strong>Add Note Boxes:</strong> For each trial of every assessment, create a note box. Place them in order and use a consistent naming format (e.g., <code>assessment_x</code>).</li>
+            <li><strong>Add Note Boxes:</strong> For each trial of every assessment, create a note box. Place them in order and use the naming convention <code>m2c2_assessment_XX_trial_data_XX</code> as noted above.</li>
             <li><strong>Add @M2C2 Action Tag:</strong> Add the <code>@M2C2</code> action tag to the first trial's note box for each assessment.</li>
         </ol>
 
@@ -62,20 +62,20 @@
         <pre><code>@M2C2={
         "activity_name":"&lt;activity_name&gt;",
         "activity_version":"&lt;activity_version&gt;",
-        "redcap_fields": ["&lt;redcap_field_1&gt;", "&lt;redcap_field_2&gt;"],
+        "redcap_fields": ["&lt;m2c2_assessment_00_trial_data_00&gt;", "&lt;m2c2_assessment_00_trial_data_01&gt;"],
         "auto_complete": true,  // OPTIONAL
-        "additional_parameters": "show_quit_button:false,locale:en-US" // OPTIONAL
+        "additional_parameters": "show_quit_button=false,locale=en-US" // OPTIONAL
     }</code></pre>
 
         <h5>Example</h5>
-        <p>For a <strong>Symbol Search</strong> assessment with two trials (note boxes named <code>m2c2_symbol_search_trial_1</code> and <code>m2c2_symbol_search_trial_2</code>), the action tag would look like this:</p>
+        <p>For a <strong>Symbol Search</strong> assessment with two trials (note boxes named <code>m2c2_assessment_00_trial_data_00</code> and <code>m2c2_assessment_00_trial_data_01</code>), the action tag would look like this:</p>
 
         <pre><code>@M2C2={
         "activity_name":"assessment-symbol-search",
-        "activity_version":"0.8.19",
-        "redcap_fields": ["m2c2_symbol_search_trial_1","m2c2_symbol_search_trial_2"],
+        "activity_version":"0.8.22",
+        "redcap_fields": ["m2c2_assessment_00_trial_data_00","m2c2_assessment_00_trial_data_01"],
         "auto_complete": true,
-        "additional_parameters": "show_quit_button:false"
+        "additional_parameters": "show_quit_button=false"
     }</code></pre>
     </div>
 </div>
@@ -99,8 +99,15 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        const minVersion = "0.8.18";
+    function loadjQuery(callback) {
+        const script = document.createElement("script");
+        script.src = "https://code.jquery.com/jquery-3.6.0.min.js"; // Change version as needed
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    function init() {
+        const minVersion = "0.8.22";
 
         function compareVersions(v1, v2) {
             const v1Parts = v1.split('.').map(Number);
@@ -161,18 +168,46 @@
                             `<code>@M2C2={\n` +
                             `   "activity_name":"assessment-${selectedAssessmentName.toLowerCase().replace(/ /g, '-')}",\n` +
                             `   "activity_version":"${selectedVersion}",\n` +
-                            `   "redcap_fields": ["field_name_1","field_name_2"],\n` +
+                            `   "redcap_fields": ["m2c2_assessment_00_trial_data_00","m2c2_assessment_00_trial_data_01"],\n` +
                             `   "auto_complete": true\n` +
                             `}</code>`;
 
                         $('#generated-code').html(`<h5>Generated Code:</h5><div style="margin-left:15px"><pre>${generatedCode}</pre></div>`);
                         $('#generated-code').show();
                     }
+
+                    // fetch assessment package.json and console log the data
+                    fetch(`https://cdn.jsdelivr.net/npm/@m2c2kit/assessment-${selectedAssessmentName.toLowerCase().replace(/ /g, '-')}@${selectedVersion}/package.json`)
+                        .then(response => response.json())
+                        .then(
+                            data => {
+                                const m2c2kit = data.m2c2kit;
+                                if (m2c2kit) {
+                                    const locales = m2c2kit.locales;
+                                    if (locales) {
+                                        // Create the HTML for the unordered list of locales
+                                        const localeList = locales.map(locale => `<li>${locale}</li>`).join('');
+                                        $('#generated-code').append(`<h5>Supported Locales:</h5><ul style="margin-left:15px">${localeList}</ul>`);
+                                    } else {
+                                        console.error('Failed to fetch the locales data:', data);
+                                    }
+                                } else {
+                                    console.error('Failed to fetch the package.json data:', data);
+                                }
+                            }
+                        )
+                        .catch(error => console.error('Failed to fetch the package.json data:', error));
                 });
             })
             .catch(error => {
                 console.error('Failed to fetch the assessments data:', error);
                 $('#assessment-info').html('<p>Error fetching assessments data. Please try again later.</p>');
             });
-    });
+    };
+
+    if (typeof jQuery === 'undefined') {
+        loadjQuery(init);
+    } else {
+        init();
+    }
 </script>
